@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+#
+# Iterate over a set of repositories in a json file and setup a shared directory containing them
+#
+
+import json
+import os
+import sys
+import subprocess
+import errno
+import tempfile
+
+import utils
+
+poky_tag_remote = "git@push.yoctoproject.org:poky-ci-archive"
+
+parser = utils.ArgParser(description='Iterates over a set of repositories in a json file and sets up a shared directory containing them.')
+
+parser.add_argument('repojson',
+                    help="The json file containing the repositories to use")
+parser.add_argument('sharedsrcdir',
+                    help="The shared directory where the repos are to be transferred")
+parser.add_argument('-p', '--publish-dir',
+                    action='store',
+                    help="Where to publish artefacts to (optional)")
+parser.add_argument('-t', '--tag',
+                    action='store',
+                    help="Git tag to create (optional)")
+
+args = parser.parse_args()
+
+ourconfig = utils.loadconfig()
+
+with open(args.repojson) as f:
+    repos = json.load(f)
+
+utils.filterrepojson(repos)
+
+stashdir = utils.getconfig("REPO_STASH_DIR", ourconfig)
+
+with tempfile.TemporaryDirectory(prefix="shared-repo-temp-", dir="/home/pokybuild/tmp") as tempdir:
+    for repo in sorted(repos.keys()):
+        utils.printheader("Intially fetching repo %s" % repo)
+        # shallow clones disabled as it doesn't work correctly with revision numbers in the result repo leading to release build failures.
+        if True or args.publish_dir:
+            utils.fetchgitrepo(tempdir, repo, repos[repo], stashdir)
+        else:
+            utils.fetchgitrepo(tempdir, repo, repos[repo], stashdir, depth=1)
+        if args.publish_dir:
+            utils.publishrepo(tempdir, repo, args.publish_dir)
+        if repo == "poky" and args.tag:
+            utils.taggitrepo(tempdir, repo, repos[repo], poky_tag_remote, args.tag)
+
+    utils.printheader("Creating shared src tarball")
+    subprocess.check_call("tar -I zstd -cf " + args.sharedsrcdir.rstrip("/") + ".tar.zst ./*", shell=True, cwd=tempdir)

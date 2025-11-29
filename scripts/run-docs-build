@@ -1,0 +1,140 @@
+#!/bin/bash
+# Called with $1 as the build directory
+#             $2 as the path to yocto-docs
+#             $3 as the path to bitbake
+
+set -e
+set -u
+set -o pipefail
+set -x
+
+builddir=$1
+ypdocs=$2/documentation/
+bbdocs=$3/doc/
+docs_buildtools=/srv/autobuilder/autobuilder.yocto.io/pub/buildtools/x86_64-buildtools-docs-nativesdk-standalone-3.2+snapshot-20201105.sh
+outputdir=$builddir/output
+scriptdir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+
+
+cd $builddir
+mkdir buildtools
+$docs_buildtools -y -d $builddir/buildtools
+. $builddir/buildtools/environment-setup*
+
+# Getting the old docbook built docs from an archive. Not rebuilding them.
+#wget https://downloads.yoctoproject.org/mirror/docbook-mirror/docbook-archives-20201105.tar.xz
+docbookarchive=/srv/autobuilder/autobuilder.yocto.io/pub/docbook-mirror/docbook-archives-20201105.tar.xz
+mkdir $outputdir
+cd $outputdir
+echo Extracing old content from archive
+tar -xJf $docbookarchive
+
+cd $bbdocs
+mkdir $outputdir/bitbake
+
+# A decision was made to keep updating all the Sphinx generated docs for the moment,
+# even the ones corresponding to no longer supported releases
+# https://lists.yoctoproject.org/g/docs/message/2193
+# We copy the releases.rst file from master so that all versions of the docs
+# see the latest releases.
+first_sphinx_commit=84ccba0f4aff91528f764523fe1205a354c889ed
+for branch in 1.46 $(git branch --remote --contains "$first_sphinx_commit" --format '%(refname:lstrip=3)'); do
+    if [ "$branch" = "HEAD" ]; then
+        continue
+    fi
+
+    echo Building bitbake $branch branch
+    git checkout $branch
+    git checkout master releases.rst
+    make clean
+    make publish
+
+    if [ "$branch" = "master-next" ]; then
+        branch="next"
+	mkdir $outputdir/bitbake/$branch
+    elif [ "$branch" = "master" ]; then
+        branch=""
+    else
+	mkdir $outputdir/bitbake/$branch
+    fi
+
+    cp -r ./_build/final/* $outputdir/bitbake/$branch
+    git reset --hard
+done
+
+# only sync bitbake folder for now. We need bitbake to be published first
+# since the bitbake intersphinx index will be downloaded to build yocto-docs
+cd $outputdir
+rsync -irlp --checksum --ignore-times --delete bitbake docs@docs.yoctoproject.org:docs/
+
+cd $ypdocs
+
+# transition must build after master for the switchers.js file
+# Again, keeping even the no longer supported releases (see above comment)
+first_sphinx_commit=01dd5af7954e24552aca022917669b27bb0541ed
+first_dunfell_sphinx_commit=c25fe058b88b893b0d146f3ed27320b47cdec236
+for branch in dunfell $(git branch --remote --contains "$first_sphinx_commit" --format '%(refname:lstrip=3)') $(git tag --contains "$first_sphinx_commit" --contains "$first_dunfell_sphinx_commit" 'yocto-*') transition; do
+    if [ "$branch" = "HEAD" ]; then
+        continue
+    fi
+
+    # Do not build <release>-next branches as they are development branches only
+    # Do build master-next branch though!
+    if echo "$branch" | grep -v "master-next" | grep -q -E "-next$"; then
+        continue
+    fi
+
+    echo Building $branch
+    git checkout $branch
+
+    if [ -e "${scriptdir}/docs-build-patches/${branch}/" ]; then
+        echo Adding patch for $branch
+        git am "${scriptdir}/docs-build-patches/${branch}/"000*
+    fi
+
+    git checkout master releases.rst
+    if [ -e poky.yaml ]; then
+        git checkout master sphinx-static/switchers.js.in
+        cp poky.yaml poky.yaml.in
+        git checkout master set_versions.py
+        case $branch in
+            yocto-*)
+                ./set_versions.py $(echo "$branch" | sed 's/yocto-//')
+                ;;
+            *)
+                ./set_versions.py
+                ;;
+        esac
+    fi
+
+    make clean
+    make publish
+
+    # Strip yocto- from tag names
+    branch=$(echo "$branch" | sed 's/yocto-//')
+
+    if [ "$branch" = "master-next" ]; then
+        branch="next"
+	mkdir $outputdir/$branch
+    elif [ "$branch" = "master" ] || [ "$branch" = "transition" ]; then
+        branch=""
+    else
+	mkdir $outputdir/$branch
+    fi
+
+    cp -r ./_build/final/* $outputdir/$branch
+    git reset --hard
+    git clean -f
+done
+
+# get current release (e.g. most recent tag), and add a 'current' link
+tag=$(git tag --list 'yocto-*' | sort --version-sort | tail -1 | cut -c7-)
+echo Linking to $tag as current
+ln -s $tag $outputdir/current
+
+# Update bitbake switchers.js with the copy from master ypdocs
+cd $outputdir/bitbake
+find . -name switchers.js -exec cp $outputdir/current/_static/switchers.js {} \;
+
+cd $outputdir
+rsync -irlp --checksum --ignore-times --delete . docs@docs.yoctoproject.org:docs/

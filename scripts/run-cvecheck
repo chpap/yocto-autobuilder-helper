@@ -1,0 +1,108 @@
+#!/bin/bash
+#
+# SPDX-License-Identifier: GPL-2.0-only
+#
+
+set -eu
+
+ARGS=$(getopt -o '' --long 'metrics:,branch:,results:,push' -n 'run-cvecheck' -- "$@")
+if [ $? -ne 0 ]; then
+    echo 'Cannot parse arguments...' >&2
+    exit 1
+fi
+eval set -- "$ARGS"
+unset ARGS
+
+# Location of the yocto-autobuilder-helper scripts
+OURDIR=$(dirname $0)
+# The metrics repository to use
+METRICSDIR=""
+# Where to copy results to
+RESULTSDIR=""
+# The branch we're building
+BRANCH=""
+# Whether to push the metrics
+PUSH=0
+
+while true; do
+    case "$1" in
+        '--metrics')
+            METRICSDIR=$(realpath $2)
+            shift 2
+            continue
+        ;;
+        '--branch')
+            BRANCH=$2
+            shift 2
+            continue
+        ;;
+        '--results')
+            RESULTSDIR=$(realpath -m $2)
+            shift 2
+            continue
+        ;;
+        '--push')
+            PUSH=1
+            shift
+            continue
+        ;;
+        '--')
+            shift
+            break
+        ;;
+        *)
+            echo "Unexpected value $1" >&2
+            exit 1
+        ;;
+    esac
+done
+
+TIMESTAMP=`date +"%s"`
+
+if ! test "$METRICSDIR" -a "$BRANCH" -a "$RESULTSDIR"; then
+    echo "Not all required options specified"
+    exit 1
+fi
+
+#
+# CVE Checks
+#
+if [ ! -d $RESULTSDIR ]; then
+    mkdir $RESULTSDIR
+fi
+
+cd ..
+set +u
+. oe-init-build-env build
+set -u
+bitbake world --runall cve_check -R conf/distro/include/cve-extra-exclusions.inc
+
+# Do another pull to make sure we're as up to date as possible.  This is
+# preferable to committing and rebasing before pushing as it would be better to
+# waste some time repeating work than commit potentially corrupted files from a
+# git merge gone wrong.
+git -C $METRICSDIR pull
+
+if [ -e tmp/log/cve/cve-summary.json ]; then
+    git -C $METRICSDIR rm --ignore-unmatch cve-check/$BRANCH/*.json
+    mkdir -p $METRICSDIR/cve-check/$BRANCH/
+    cp tmp/log/cve/cve-summary.json $METRICSDIR/cve-check/$BRANCH/$TIMESTAMP.json
+    git -C $METRICSDIR add cve-check/$BRANCH/$TIMESTAMP.json
+    git -C $METRICSDIR commit -asm "Autobuilder adding new CVE data for branch $BRANCH" || true
+    if [ "$PUSH" = "1" ]; then
+        git -C $METRICSDIR push
+    fi
+    $OURDIR/cve-report.py tmp/log/cve/cve-summary.json > $RESULTSDIR/cve-status-$BRANCH.txt
+fi
+
+if [ "$BRANCH" = "master" ]; then
+    mkdir -p $METRICSDIR/cve-check/$BRANCH/
+    $OURDIR/cve-generate-chartdata --json $METRICSDIR/cve-count-byday.json --resultsdir $METRICSDIR/cve-check/
+    git -C $METRICSDIR add cve-count-byday.json
+    git -C $METRICSDIR commit -asm "Autobuilder updating CVE counts" || true
+    if [ "$PUSH" = "1" ]; then
+        git -C $METRICSDIR push
+    fi
+
+    cp $METRICSDIR/cve-count-byday.json $RESULTSDIR
+fi

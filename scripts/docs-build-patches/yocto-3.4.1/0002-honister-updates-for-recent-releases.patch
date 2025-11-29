@@ -1,0 +1,26 @@
+From a6b10a8e2491e284e7faf439fa196605ddf40943 Mon Sep 17 00:00:00 2001
+From: Michael Opdenacker <michael.opdenacker@bootlin.com>
+Date: Mon, 13 Dec 2021 16:17:47 +0100
+Subject: [PATCH] [honister] updates for recent releases
+
+Signed-off-by: Michael Opdenacker <michael.opdenacker@bootlin.com>
+---
+ documentation/conf.py                    | 2 +-
+ documentation/poky.yaml                  | 8 ++++----
+ documentation/releases.rst               | 8 ++++++++
+ documentation/sphinx-static/switchers.js | 4 ++--
+ 4 files changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/documentation/conf.py b/documentation/conf.py
+index eff758a7b..ef369b7f1 100644
+--- a/documentation/conf.py
++++ b/documentation/conf.py
+@@ -16,7 +16,7 @@ import os
+ import sys
+ import datetime
+ 
+-current_version = "3.4"
++current_version = "3.4.1"
+ bitbake_version = "1.52"
+ 
+ # String used in sidebar

@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# SPDX-License-Identifier: GPL-2.0-only
+#
+PARENTDIR=`realpath $1`
+TARGETDIR=`realpath $2`
+RESULTSDIR=`realpath -m $3`
+BUILDDIR=`realpath $4`
+BRANCH=$5
+OURDIR=`dirname $0`
+
+TIMESTAMP=`date +"%s"`
+
+# We only monitor patch metrics on the master branch
+if [ "$BRANCH" != "master" ]; then
+    exit 0
+fi
+
+#
+# Patch Metrics
+#
+if [ ! -e $PARENTDIR/yocto-metrics ]; then
+    git clone ssh://git@push.yoctoproject.org/yocto-metrics $PARENTDIR/yocto-metrics
+fi
+$OURDIR/patchmetrics-update --repo $PARENTDIR --patchscript $PARENTDIR/scripts/contrib/patchreview.py --metadata $TARGETDIR --json $PARENTDIR/yocto-metrics/patch-status.json
+git -C $PARENTDIR/yocto-metrics commit -asm "Autobuilder adding new patch stats"
+git -C $PARENTDIR/yocto-metrics push
+
+if [ ! -d $RESULTSDIR ]; then
+    mkdir $RESULTSDIR
+fi
+
+$OURDIR/patchmetrics-generate-chartdata --json $PARENTDIR/yocto-metrics/patch-status.json --outputdir $RESULTSDIR
+cp $PARENTDIR/yocto-metrics/patch-status.json $RESULTSDIR
+cp $PARENTDIR/yocto-metrics/patch-status/* $RESULTSDIR
