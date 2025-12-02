@@ -464,12 +464,6 @@
             },
             "step2" : {
                 "EXTRACMDS" : ["bitbake-layers remove-layer ../meta-yocto-bsp; yocto-check-layer ../meta-yocto-bsp"]
-            },
-            "step3" : {
-                "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-mingw"]
-            },
-            "step4" : {
-                "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-gplv2"]
             }
         },
         "check-layer-nightly" : {
@@ -772,14 +766,14 @@
     "repo-defaults" : {
         "poky" : {
             "url" : "ssh://git@push.yoctoproject.org/poky",
-            "branch" : "master",
+            "branch" : "kirkstone",
             "revision" : "HEAD",
             "checkout-dirname" : ".",
             "no-layer-add" : true,
             "call-init" : true
         },
         "oecore" : {"url" : "ssh://git@push.openembedded.org/openembedded-core",
-            "branch" : "master",
+            "branch" : "kirkstone",
             "revision" : "HEAD",
             "checkout-dirname" : ".",
             "no-layer-add" : true,
@@ -787,31 +781,31 @@
         },
         "bitbake" : {
             "url" : "ssh://git@push.openembedded.org/bitbake",
-            "branch" : "master",
+            "branch" : "2.0",
             "revision" : "HEAD",
             "no-layer-add" : true
         },
         "meta-virtualization" : {
             "url" : "ssh://git@push.yoctoproject.org/meta-virtualization",
-            "branch" : "master",
+            "branch" : "kiurkstone",
             "revision" : "HEAD",
             "no-layer-add" : true
         },
         "meta-openembedded" : {
             "url" : "ssh://git@push.openembedded.org/meta-openembedded",
-            "branch" : "master",
+            "branch" : "kiurkstone",
             "revision" : "HEAD",
             "no-layer-add" : true
         },
         "meta-arm" : {
             "url" : "ssh://git@push.yoctoproject.org/meta-arm",
-            "branch" : "master",
+            "branch" : "kirkstone",
             "revision" : "HEAD",
             "no-layer-add" : true
         },
         "meta-security" : {
             "url" : "ssh://git@push.yoctoproject.org/meta-security",
-            "branch" : "master",
+            "branch" : "kirkstone",
             "revision" : "HEAD",
             "no-layer-add" : true
         }
