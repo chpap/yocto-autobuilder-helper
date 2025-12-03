@@ -831,13 +831,13 @@
         },
         "meta-virtualization" : {
             "url" : "ssh://git@push.yoctoproject.org/meta-virtualization",
-            "branch" : "kiurkstone",
+            "branch" : "kirkstone",
             "revision" : "HEAD",
             "no-layer-add" : true
         },
         "meta-openembedded" : {
             "url" : "ssh://git@push.openembedded.org/meta-openembedded",
-            "branch" : "kiurkstone",
+            "branch" : "kirkstone",
             "revision" : "HEAD",
             "no-layer-add" : true
         },
@@ -849,6 +849,12 @@
         },
         "meta-security" : {
             "url" : "ssh://git@push.yoctoproject.org/meta-security",
+            "branch" : "kirkstone",
+            "revision" : "HEAD",
+            "no-layer-add" : true
+        },
+        "meta-delian" : {
+            "url" : "ssh://git@github.com/chpap/meta-delian",
             "branch" : "kirkstone",
             "revision" : "HEAD",
             "no-layer-add" : true
