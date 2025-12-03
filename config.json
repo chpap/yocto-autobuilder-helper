@@ -272,7 +272,10 @@
             "TEMPLATE" : "ptest-qemu-fast"
         },
         "delian-jetson" : {
-            "NEEDREPOS" : ["poky", "meta-tegra"],
+            "NEEDREPOS" : ["poky", "meta-tegra", "meta-delian"],
+            "ADDLAYER" : [
+                "${BUILDDIR}/../meta-delian/meta-delian-os"
+            ],
             "step1": {
                 "shortname": "Build for jetson NX",
                 "MACHINE": "jetson-xavier-nx-devkit-emmc",
@@ -281,7 +284,10 @@
                 }
         },
         "delian-rpi" : {
-            "NEEDREPOS" : ["poky", "meta-raspberrypi"],
+            "NEEDREPOS" : ["poky", "meta-raspberrypi", "meta-delian"],
+            "ADDLAYER" : [
+                "${BUILDDIR}/../meta-delian/meta-delian-os"
+            ],
             "step1": {
                 "shortname": "Build for raspberrypi",
                 "MACHINE": "raspberrypi4",
@@ -292,6 +298,10 @@
         "delian-qemu" : {
             "MACHINE" : "qemux86-64",
             "TEMPLATE" : "arch-qemu",
+            "NEEDREPOS" : ["poky", "meta-delian"],
+            "ADDLAYER" : [
+                "${BUILDDIR}/../meta-delian/meta-delian-os"
+            ],
             "step1": {
                 "shortname": "Build for qemux86",
                 "BBTARGETS": "core-image-minimal core-image-base core-image-base:do_populate_sdk",
