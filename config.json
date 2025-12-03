@@ -271,6 +271,33 @@
             "MACHINE" : "qemuarm64",
             "TEMPLATE" : "ptest-qemu-fast"
         },
+        "delian-jetson" : {
+            "NEEDREPOS" : ["poky", "meta-tegra"],
+            "step1": {
+                "shortname": "Build for jetson NX",
+                "MACHINE": "jetson-xavier-nx-devkit-emmc",
+                "BBTARGETS": "core-image-minimal core-image-base core-image-base:do_populate_sdk",
+                "SANITYTARGETS" : "core-image-base:do_testsdk"
+                }
+        },
+        "delian-rpi" : {
+            "NEEDREPOS" : ["poky", "meta-raspberrypi"],
+            "step1": {
+                "shortname": "Build for raspberrypi",
+                "MACHINE": "raspberrypi4",
+                "BBTARGETS": "core-image-minimal core-image-base core-image-base:do_populate_sdk",
+                "SANITYTARGETS" : "core-image-base:do_testsdk"
+                }
+        },
+        "delian-qemu" : {
+            "MACHINE" : "qemux86-64",
+            "TEMPLATE" : "arch-qemu",
+            "step1": {
+                "shortname": "Build for qemux86",
+                "BBTARGETS": "core-image-minimal core-image-base core-image-base:do_populate_sdk",
+                "SANITYTARGETS" : "core-image-base:do_testsdk"
+                }
+        },
         "meta-arm" : {
             "NEEDREPOS" : ["poky", "meta-arm"],
             "ADDLAYER" : [
