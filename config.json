@@ -4,7 +4,7 @@
     "BASE_PUBLISHDIR" : "/srv/autobuilder/downloads.yoctoproject.org",
 
     "BUILD_HISTORY_DIR" : "buildhistory",
-    "BUILD_HISTORY_REPO" : "ssh://git@push.yoctoproject.org/poky-buildhistory",
+    "BUILD_HISTORY_REPO" : "git://git.yoctoproject.org/poky-buildhistory",
     "BUILD_HISTORY_DIRECTPUSH" : ["poky:morty", "poky:pyro", "poky:rocko", "poky:sumo", "poky:thud", "poky:warrior", "poky:zeus", "poky:dunfell", "poky:gatesgarth", "poky:hardknott", "poky:honister", "poky:kirkstone", "poky:master"],
     "BUILD_HISTORY_FORKPUSH" : {"poky-contrib:ross/mut" : "poky:master", "poky:master-next" : "poky:master"},
 
@@ -547,7 +547,7 @@
             "step1" : {
                 "shortname" : "Fetching metrics repositories",
                 "EXTRAPLAINCMDS" : [
-                    "git clone ssh://git@push.yoctoproject.org/yocto-metrics && git clone ssh://git@push.yoctoproject.org/yocto-metrics-meta-oe",
+                    "git clone git://git.yoctoproject.org/yocto-metrics && git clone git://git.yoctoproject.org/yocto-metrics-meta-oe",
                     "install -D ${SCRIPTSDIR}/cvecheck/cvelayer.bbclass ./build/classes/cvelayer.bbclass"
                 ]
             },
@@ -816,14 +816,14 @@
     },
     "repo-defaults" : {
         "poky" : {
-            "url" : "ssh://git@push.yoctoproject.org/poky",
+            "url" : "git://git.yoctoproject.org/poky",
             "branch" : "kirkstone",
             "revision" : "HEAD",
             "checkout-dirname" : ".",
             "no-layer-add" : true,
             "call-init" : true
         },
-        "oecore" : {"url" : "ssh://git@push.openembedded.org/openembedded-core",
+        "oecore" : {"url" : "git://git.openembedded.org/openembedded-core",
             "branch" : "kirkstone",
             "revision" : "HEAD",
             "checkout-dirname" : ".",
@@ -831,31 +831,31 @@
             "call-init" : true
         },
         "bitbake" : {
-            "url" : "ssh://git@push.openembedded.org/bitbake",
+            "url" : "git://git.openembedded.org/bitbake",
             "branch" : "2.0",
             "revision" : "HEAD",
             "no-layer-add" : true
         },
         "meta-virtualization" : {
-            "url" : "ssh://git@push.yoctoproject.org/meta-virtualization",
+            "url" : "git://git.yoctoproject.org/meta-virtualization",
             "branch" : "kirkstone",
             "revision" : "HEAD",
             "no-layer-add" : true
         },
         "meta-openembedded" : {
-            "url" : "ssh://git@push.openembedded.org/meta-openembedded",
+            "url" : "git://git.openembedded.org/meta-openembedded",
             "branch" : "kirkstone",
             "revision" : "HEAD",
             "no-layer-add" : true
         },
         "meta-arm" : {
-            "url" : "ssh://git@push.yoctoproject.org/meta-arm",
+            "url" : "git://git.yoctoproject.org/meta-arm",
             "branch" : "kirkstone",
             "revision" : "HEAD",
             "no-layer-add" : true
         },
         "meta-security" : {
-            "url" : "ssh://git@push.yoctoproject.org/meta-security",
+            "url" : "git://git.yoctoproject.org/meta-security",
             "branch" : "kirkstone",
             "revision" : "HEAD",
             "no-layer-add" : true
