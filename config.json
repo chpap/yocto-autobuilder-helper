@@ -274,14 +274,14 @@
         "delian-jetson" : {
             "NEEDREPOS" : ["poky", "meta-openembedded", "meta-virtualization", "meta-tegra", "meta-tegra-community", "meta-delian"],
             "ADDLAYER" : [
-                "${BUILDDIR}/../meta-tegra",
-                "${BUILDDIR}/../meta-tegra-community",
-                "${BUILDDIR}/../meta-delian/meta-delian-os",
-                "${BUILDDIR}/../meta-delian/meta-tegra-support",
                 "${BUILDDIR}/../meta-openembedded/meta-oe",
                 "${BUILDDIR}/../meta-openembedded/meta-python",
                 "${BUILDDIR}/../meta-openembedded/meta-networking",
-                "${BUILDDIR}/../meta-openembedded/meta-filesystems"
+                "${BUILDDIR}/../meta-openembedded/meta-filesystems",
+                "${BUILDDIR}/../meta-tegra",
+                "${BUILDDIR}/../meta-tegra-community",
+                "${BUILDDIR}/../meta-delian/meta-delian-os",
+                "${BUILDDIR}/../meta-delian/meta-tegra-support"
             ],
             "step1": {
                 "shortname": "Build for jetson NX",
@@ -308,13 +308,13 @@
             "NEEDREPOS" : ["poky", "meta-openembedded", "meta-virtualization", "meta-tegra", "meta-tegra-community", "meta-delian"],
             "ADDLAYER" : [
                 "${BUILDDIR}/../meta-tegra",
-                "${BUILDDIR}/../meta-tegra-community",
-                "${BUILDDIR}/../meta-delian/meta-delian-os",
-                "${BUILDDIR}/../meta-delian/meta-tegra-support",
                 "${BUILDDIR}/../meta-openembedded/meta-oe",
                 "${BUILDDIR}/../meta-openembedded/meta-python",
                 "${BUILDDIR}/../meta-openembedded/meta-networking",
-                "${BUILDDIR}/../meta-openembedded/meta-filesystems"
+                "${BUILDDIR}/../meta-openembedded/meta-filesystems",
+                "${BUILDDIR}/../meta-tegra-community",
+                "${BUILDDIR}/../meta-delian/meta-delian-os",
+                "${BUILDDIR}/../meta-delian/meta-tegra-support"
             ],
             "step1": {
                 "shortname": "Build for qemux86",
