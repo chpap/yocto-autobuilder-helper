@@ -272,6 +272,7 @@
             "TEMPLATE" : "ptest-qemu-fast"
         },
         "delian-jetson" : {
+            "DISTRO" : "delios",
             "NEEDREPOS" : ["poky", "meta-openembedded", "meta-ros", "meta-virtualization", "meta-tegra", "meta-tegra-community", "meta-delian"],
             "ADDLAYER" : [
                 "${BUILDDIR}/../meta-openembedded/meta-oe",
@@ -294,18 +295,20 @@
                 }
         },
         "delian-rpi" : {
+            "DISTRO" : "delios",
+            "MACHINE": "raspberrypi4",
             "NEEDREPOS" : ["poky", "meta-raspberrypi", "meta-delian"],
             "ADDLAYER" : [
                 "${BUILDDIR}/../meta-delian/meta-delian-os"
             ],
             "step1": {
                 "shortname": "Build for raspberrypi",
-                "MACHINE": "raspberrypi4",
                 "BBTARGETS": "core-image-minimal core-image-base core-image-base:do_populate_sdk",
                 "SANITYTARGETS" : "core-image-base:do_testsdk"
                 }
         },
         "delian-qemu" : {
+            "DISTRO" : "delios",
             "MACHINE" : "qemux86-64",
             "TEMPLATE" : "arch-qemu",
             "NEEDREPOS" : ["poky", "meta-openembedded", "meta-virtualization", "meta-tegra", "meta-tegra-community", "meta-delian"],
