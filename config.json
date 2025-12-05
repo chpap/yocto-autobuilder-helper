@@ -288,7 +288,7 @@
                 "${BUILDDIR}/../meta-delian/meta-tegra-support"
             ],
             "extravars" : [
-		    "PREFERRED_VERSION_libglvnd = '1.6%' "
+		    "PREFERRED_VERSION_libglvnd = '1.4%' "
                 ],
             "step1": {
                 "shortname": "Build for jetson NX",
