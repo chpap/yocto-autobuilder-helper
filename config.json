@@ -28,7 +28,7 @@
         "NEEDREPOS" : ["poky"],
         "DISTRO" : "poky",
         "MACHINE" : "qemux86-64",
-        "SDKMACHINE" : "i686",
+        "SDKMACHINE" : "x86_64",
         "PACKAGE_CLASSES" : "package_rpm package_deb package_ipk",
         "DLDIR" : "DL_DIR = '${BASE_SHAREDDIR}/current_sources'",
         "SSTATEDIR" : ["SSTATE_DIR ?= '${BASE_SHAREDDIR}/pub/sstate'"],
