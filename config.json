@@ -287,6 +287,9 @@
                 "${BUILDDIR}/../meta-delian/meta-delian-os",
                 "${BUILDDIR}/../meta-delian/meta-tegra-support"
             ],
+            "extravars" : [
+		    "PREFERRED_VERSION_libglvnd = '1.6%' "
+                ],
             "step1": {
                 "shortname": "Build for jetson NX",
                 "MACHINE": "jetson-xavier-nx-devkit-emmc",
