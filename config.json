@@ -278,6 +278,7 @@
                 "${BUILDDIR}/../meta-openembedded/meta-python",
                 "${BUILDDIR}/../meta-openembedded/meta-networking",
                 "${BUILDDIR}/../meta-openembedded/meta-filesystems",
+                "${BUILDDIR}/../meta-ros/meta-ros-common",
                 "${BUILDDIR}/../meta-ros/meta-ros2",
                 "${BUILDDIR}/../meta-ros/meta-ros2-humble",
                 "${BUILDDIR}/../meta-tegra",
