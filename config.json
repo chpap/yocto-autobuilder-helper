@@ -5,7 +5,7 @@
 
     "BUILD_HISTORY_DIR" : "buildhistory",
     "BUILD_HISTORY_REPO" : "git://git.yoctoproject.org/poky-buildhistory",
-    "BUILD_HISTORY_DIRECTPUSH" : ["poky:morty", "poky:pyro", "poky:rocko", "poky:sumo", "poky:thud", "poky:warrior", "poky:zeus", "poky:dunfell", "poky:gatesgarth", "poky:hardknott", "poky:honister", "poky:kirkstone", "poky:master"],
+    "BUILD_HISTORY_DIRECTPUSH" : ["poky:kirkstone", "poky:master"],
     "BUILD_HISTORY_FORKPUSH" : {"poky-contrib:ross/mut" : "poky:master", "poky:master-next" : "poky:master"},
 
     "BUILDTOOLS_URL" : "https://downloads.yoctoproject.org/releases/yocto/yocto-4.3/buildtools/x86_64-buildtools-extended-nativesdk-standalone-4.3.sh",
@@ -29,7 +29,7 @@
         "DISTRO" : "poky",
         "MACHINE" : "qemux86-64",
         "SDKMACHINE" : "x86_64",
-        "PACKAGE_CLASSES" : "package_rpm package_deb package_ipk",
+        "PACKAGE_CLASSES" : "package_deb",
         "DLDIR" : "DL_DIR = '${BASE_SHAREDDIR}/current_sources'",
         "SSTATEDIR" : ["SSTATE_DIR ?= '${BASE_SHAREDDIR}/pub/sstate'"],
         "SSTATEDIR_RELEASE" : ["SSTATE_DIR ?= '${BASE_SHAREDDIR}/pub/sstate'"],
@@ -165,7 +165,7 @@
             "MACHINE" : "qemux86",
             "SSTATEDIR" : ["SSTATE_DIR ?= '${HELPERBUILDDIR}/sstate'"],
             "SSTATEDIR_RELEASE" : ["SSTATE_DIR ?= '${HELPERBUILDDIR}/sstate'"],
-            "PACKAGE_CLASSES" : "package_rpm",
+            "PACKAGE_CLASSES" : "package_deb",
             "EXTRAPLAINCMDS" : [
                 "${SCRIPTSDIR}/build-perf-test-wrapper -r ${BUILDPERF_RESULTSDIR} -E yocto-perf@lists.yoctoproject.org -d ${BUILDPERF_STATEDIR}/downloads -w ${BASE_HOMEDIR}/build-perf-test -p ${HELPERRESULTSDIR}/${HELPERTARGET} -R ${HELPERREPONAME} -b ${HELPERBRANCHNAME} --push git@push.yoctoproject.org:yocto-buildstats"
             ],
@@ -181,7 +181,7 @@
         },
         "selftest" : {
             "MACHINE" : "qemux86-64",
-            "PACKAGE_CLASSES" : "package_rpm",
+            "PACKAGE_CLASSES" : "package_deb",
             "extravars" : [
                 "RPM_GPG_SIGN_CHUNK = '1'",
                 "IMAGE_INSTALL:append = ' ssh-pregen-hostkeys'"
@@ -321,7 +321,7 @@
             "step5" : {
                 "BUILDINFO" : false,
                 "MACHINE" : "qemux86-64",
-                "PACKAGE_CLASSES" : "package_rpm",
+                "PACKAGE_CLASSES" : "package_deb",
                 "extravars" : [
                     "RPM_GPG_SIGN_CHUNK = '1'"
                 ],
@@ -349,31 +349,6 @@
         "qemux86-64-ltp" : {
             "MACHINE" : "qemux86-64",
             "TEMPLATE" : "ltp-qemu"
-        },
-        "pkgman-rpm-non-rpm" : {
-            "MACHINE" : "qemux86-64",
-            "PACKAGE_CLASSES" : "package_rpm",
-            "BBTARGETS" : "core-image-sato core-image-sato-sdk core-image-minimal core-image-minimal-dev",
-            "SANITYTARGETS" : "core-image-minimal:do_testimage core-image-sato:do_testimage core-image-sato-sdk:do_testimage"
-        },
-        "pkgman-deb-non-deb" : {
-            "MACHINE" : "qemux86-64",
-            "PACKAGE_CLASSES" : "package_deb",
-            "BBTARGETS" : "core-image-sato core-image-sato-sdk core-image-minimal core-image-minimal-dev core-image-sato:do_populate_sdk",
-            "SANITYTARGETS" : "core-image-minimal:do_testimage core-image-sato:do_testimage core-image-sato-sdk:do_testimage core-image-sato:do_testsdk"
-        },
-        "pkgman-non-rpm" : {
-            "MACHINE" : "qemux86-64",
-            "step1" : {
-                "PACKAGE_CLASSES" : "package_ipk",
-                "BBTARGETS" : "core-image-sato core-image-sato-sdk core-image-minimal core-image-minimal-dev",
-                "SANITYTARGETS" : "core-image-minimal:do_testimage core-image-sato:do_testimage core-image-sato-sdk:do_testimage"
-            },
-            "step2" : {
-                "PACKAGE_CLASSES" : "package_deb",
-                "BBTARGETS" : "core-image-sato core-image-sato-sdk core-image-minimal core-image-minimal-dev",
-                "SANITYTARGETS" : "core-image-minimal:do_testimage core-image-sato:do_testimage core-image-sato-sdk:do_testimage"
-            }
         },
         "wic" : {
             "BUILDINFO" : true,
