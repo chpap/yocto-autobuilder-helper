@@ -193,6 +193,21 @@ case "$target" in
         sha256sums $TMPDIR/deploy/images/genericx86
         cp -R --no-dereference --preserve=links $TMPDIR/deploy/images/genericx86/*genericx86* $DEST/machines/genericx86-alt
         ;;
+    "delian-jetson")
+        mkdir -p $DEST/machines/meta-tegra/jetson-xavier
+        sha256sums $TMPDIR/deploy/images/jetson-xavier-nx-devkit-emmc
+        cp -R --no-dereference --preserve=links $TMPDIR/deploy/images/jetson-xavier-nx-devkit-emmc/*jetson-xavier* $DEST/machines/meta-tegra/jetson-xavier
+        ;;
+    "delian-qemu")
+        mkdir -p $DEST/machines/qemu/qemux86-64
+        sha256sums $TMPDIR/deploy/images/qemux86-64
+        cp -R --no-dereference --preserve=links $TMPDIR/deploy/images/qemux86-64/*qemux86-64* $DEST/machines/qemu/qemux86-64
+        ;;
+    "meta-tegra")
+        mkdir -p $DEST/machines/meta-tegra/jetson-xavier
+        sha256sums $TMPDIR/deploy/images/jetson-xavier-nx-devkit-emmc
+        cp -R --no-dereference --preserve=links $TMPDIR/deploy/images/jetson-xavier-nx-devkit-emmc/*jetson-xavier* $DEST/machines/meta-tegra/jetson
+        ;;
     "meta-arm")
         mkdir -p $DEST/machines/meta-arm/generic-arm64
         sha256sums $TMPDIR/deploy/images/generic-arm64
