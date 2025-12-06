@@ -270,7 +270,7 @@
             "MACHINE": "jetson-xavier-nx-devkit-emmc",
             "step1": {
                 "shortname": "Build for jetson NX",
-                "BBTARGETS": "core-image-minimal demo-image-base demo-image-base:do_populate_sdk",
+                "BBTARGETS": "demo-image-base demo-image-base:do_populate_sdk",
                 "SANITYTARGETS" : "demo-image-base:do_testsdk"
                 }
         },
@@ -283,7 +283,7 @@
             ],
             "step1": {
                 "shortname": "Build for raspberrypi",
-                "BBTARGETS": "core-image-minimal core-image-base core-image-base:do_populate_sdk",
+                "BBTARGETS": "delian-image-base -delian image-base:do_populate_sdk",
                 "SANITYTARGETS" : "core-image-base:do_testsdk"
                 }
         },
@@ -292,7 +292,7 @@
             "MACHINE" : "qemux86-64",
             "step1": {
                 "shortname": "Build for qemux86",
-                "BBTARGETS": "demo-image-base core-image-minimal demo-image-base:do_populate_sdk",
+                "BBTARGETS": "demo-image-base demo-image-base:do_populate_sdk",
                 "SANITYTARGETS" : "demo-image-base:do_testsdk"
                 }
         },
