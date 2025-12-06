@@ -84,7 +84,6 @@
                 "SANITYTARGETS" : "core-image-minimal:do_testimage core-image-base:do_testimage core-image-base:do_testsdk"
             },
             "step2" : {
-                "SDKMACHINE" : "x86_64",
                 "BBTARGETS" : "core-image-base:do_populate_sdk core-image-minimal:do_populate_sdk_ext core-image-base:do_populate_sdk_ext",
                 "SANITYTARGETS" : "core-image-base:do_testsdk core-image-minimal:do_testsdkext core-image-base:do_testsdkext"
             },
@@ -95,18 +94,26 @@
                 "ADDLAYER" : ["${BUILDDIR}/../meta-selftest"]
             }
         },
-        "altcfg-qemu" : {
-            "DISTRO" : "poky-altcfg",
-            "BUILDINFO" : true,
-            "BUILDHISTORY" : true,
-            "extravars" : [
-                "IMAGE_INSTALL:append = ' ssh-pregen-hostkeys'"
+        "delios": {
+            "DISTRO" : "delios",
+            "NEEDREPOS" : ["poky", "meta-openembedded", "meta-ros", "meta-virtualization", "meta-tegra", "meta-tegra-community", "meta-delian"],
+            "ADDLAYER" : [
+                "${BUILDDIR}/../meta-openembedded/meta-oe",
+                "${BUILDDIR}/../meta-openembedded/meta-python",
+                "${BUILDDIR}/../meta-openembedded/meta-networking",
+                "${BUILDDIR}/../meta-openembedded/meta-filesystems",
+                "${BUILDDIR}/../meta-ros/meta-ros-common",
+                "${BUILDDIR}/../meta-ros/meta-ros2",
+                "${BUILDDIR}/../meta-ros/meta-ros2-humble",
+                "${BUILDDIR}/../meta-tegra",
+                "${BUILDDIR}/../meta-tegra-community",
+                "${BUILDDIR}/../meta-delian/meta-delian-os",
+                "${BUILDDIR}/../meta-delian/meta-tegra-support"
             ],
-            "step1" : {
-                "BBTARGETS" : "core-image-full-cmdline core-image-sato core-image-sato-sdk",
-                "SANITYTARGETS" : "core-image-full-cmdline:do_testimage core-image-sato:do_testimage core-image-sato-sdk:do_testimage"
-            }
-        },
+            "extravars" : [
+		    "PREFERRED_VERSION_libglvnd = '1.4%' "
+            ]
+	},
         "ptest-qemu" : {
             "BUILDINFO" : true,
             "BBTARGETS" : "core-image-ptest-all",
@@ -145,7 +152,6 @@
         "arch-hw-qemu" : {
             "BUILDINFO" : true,
             "step1" : {
-                "SDKMACHINE" : "x86_64",
                 "BBTARGETS" : "core-image-minimal core-image-base core-image-base:do_populate_sdk core-image-base:do_populate_sdk_ext",
                 "SANITYTARGETS" : "core-image-minimal:do_testimage core-image-base:do_testimage core-image-base:do_testsdk core-image-sato:do_testsdkext"
             },
@@ -155,16 +161,8 @@
                 "EXTRACMDS" : ["${SCRIPTSDIR}/checkvnc; DISPLAY=:1 oe-selftest -a -t machine -j 15"]
             }
         },
-        "altcfg-hw" : {
-            "DISTRO" : "poky-altcfg",
-            "BUILDINFO" : true,
-            "step1" : {
-                "BBTARGETS" : "core-image-full-cmdline core-image-sato core-image-sato-sdk"
-            }
-        },
         "buildperf" : {
             "MACHINE" : "qemux86",
-            "SDKMACHINE" : "x86_64",
             "SSTATEDIR" : ["SSTATE_DIR ?= '${HELPERBUILDDIR}/sstate'"],
             "SSTATEDIR_RELEASE" : ["SSTATE_DIR ?= '${HELPERBUILDDIR}/sstate'"],
             "PACKAGE_CLASSES" : "package_rpm",
@@ -183,7 +181,6 @@
         },
         "selftest" : {
             "MACHINE" : "qemux86-64",
-            "SDKMACHINE" : "x86_64",
             "PACKAGE_CLASSES" : "package_rpm",
             "extravars" : [
                 "RPM_GPG_SIGN_CHUNK = '1'",
@@ -205,7 +202,6 @@
         },
         "reproducible" : {
             "MACHINE" : "qemux86-64",
-            "SDKMACHINE" : "x86_64",
             "step1" : {
                 "shortname" : "Reproducible Selftest",
                 "EXTRACMDS" : ["${SCRIPTSDIR}/checkvnc; OEQA_DEBUGGING_SAVED_OUTPUT=${BASE_SHAREDDIR}/pub/repro-fail/ DISPLAY=:1 oe-selftest -r reproducible"],
@@ -214,7 +210,6 @@
             }
         },
         "trigger-build" : {
-            "SDKMACHINE" : "x86_64",
             "MACHINE" : "qemux86",
             "step1" : {
                 "shortname" : "Sources pre-fetching",
@@ -231,7 +226,6 @@
             }
         },
         "trigger-build-posttrigger" : {
-            "SDKMACHINE" : "x86_64",
             "MACHINE" : "qemux86",
             "step1" : {
                 "shortname" : "Source Mirror Selftest",
@@ -272,27 +266,10 @@
             "TEMPLATE" : "ptest-qemu-fast"
         },
         "delian-jetson" : {
-            "DISTRO" : "delios",
-            "NEEDREPOS" : ["poky", "meta-openembedded", "meta-ros", "meta-virtualization", "meta-tegra", "meta-tegra-community", "meta-delian"],
-            "ADDLAYER" : [
-                "${BUILDDIR}/../meta-openembedded/meta-oe",
-                "${BUILDDIR}/../meta-openembedded/meta-python",
-                "${BUILDDIR}/../meta-openembedded/meta-networking",
-                "${BUILDDIR}/../meta-openembedded/meta-filesystems",
-                "${BUILDDIR}/../meta-ros/meta-ros-common",
-                "${BUILDDIR}/../meta-ros/meta-ros2",
-                "${BUILDDIR}/../meta-ros/meta-ros2-humble",
-                "${BUILDDIR}/../meta-tegra",
-                "${BUILDDIR}/../meta-tegra-community",
-                "${BUILDDIR}/../meta-delian/meta-delian-os",
-                "${BUILDDIR}/../meta-delian/meta-tegra-support"
-            ],
-            "extravars" : [
-		    "PREFERRED_VERSION_libglvnd = '1.4%' "
-                ],
+            "TEMPLATE" : "delios",
+            "MACHINE": "jetson-xavier-nx-devkit-emmc",
             "step1": {
                 "shortname": "Build for jetson NX",
-                "MACHINE": "jetson-xavier-nx-devkit-emmc",
                 "BBTARGETS": "core-image-minimal demo-image-base demo-image-base:do_populate_sdk",
                 "SANITYTARGETS" : "demo-image-base:do_testsdk"
                 }
@@ -311,45 +288,13 @@
                 }
         },
         "delian-qemu" : {
-            "DISTRO" : "delios",
+            "TEMPLATE" : "delios",
             "MACHINE" : "qemux86-64",
-            "TEMPLATE" : "arch-qemu",
-            "NEEDREPOS" : ["poky", "meta-openembedded", "meta-virtualization", "meta-tegra", "meta-tegra-community", "meta-delian"],
-            "ADDLAYER" : [
-                "${BUILDDIR}/../meta-tegra",
-                "${BUILDDIR}/../meta-openembedded/meta-oe",
-                "${BUILDDIR}/../meta-openembedded/meta-python",
-                "${BUILDDIR}/../meta-openembedded/meta-networking",
-                "${BUILDDIR}/../meta-openembedded/meta-filesystems",
-                "${BUILDDIR}/../meta-tegra-community",
-                "${BUILDDIR}/../meta-delian/meta-delian-os",
-                "${BUILDDIR}/../meta-delian/meta-tegra-support"
-            ],
             "step1": {
                 "shortname": "Build for qemux86",
                 "BBTARGETS": "demo-image-base core-image-minimal demo-image-base:do_populate_sdk",
                 "SANITYTARGETS" : "demo-image-base:do_testsdk"
                 }
-        },
-        "meta-arm" : {
-            "NEEDREPOS" : ["poky", "meta-arm"],
-            "ADDLAYER" : [
-                "${BUILDDIR}/../meta-arm/meta-arm-toolchain",
-                "${BUILDDIR}/../meta-arm/meta-arm",
-                "${BUILDDIR}/../meta-arm/meta-arm-bsp"
-            ],
-            "step1": {
-                "shortname": "Build for fvp-base",
-                "MACHINE": "fvp-base",
-                "BBTARGETS": "core-image-minimal core-image-sato core-image-sato:do_populate_sdk",
-                "SANITYTARGETS" : "core-image-sato:do_testsdk"
-                },
-            "step2": {
-                "shortname": "Build for generic-arm64",
-                "MACHINE": "generic-arm64",
-                "BBTARGETS": "core-image-minimal core-image-sato core-image-sato:do_populate_sdk",
-                "SANITYTARGETS" : "core-image-sato:do_testsdk"
-            }
         },
        "bringup" : {
             "BUILDINFO" : true,
@@ -366,19 +311,16 @@
 
             },
             "step3" : {
-                 "SDKMACHINE" : "x86_64",
                  "BBTARGETS" : "core-image-sato:do_populate_sdk core-image-minimal:do_populate_sdk_ext core-image-sato:do_populate_sdk_ext",
                  "SANITYTARGETS" : "core-image-sato:do_testsdk core-image-minimal:do_testsdkext core-image-sato:do_testsdkext"
              },
             "step4" : {
                 "MACHINE" : "qemux86-64",
-                "SDKMACHINE" : "x86_64",
                 "BBTARGETS" : "core-image-minimal:do_populate_sdk_ext core-image-sato:do_populate_sdk"
             },
             "step5" : {
                 "BUILDINFO" : false,
                 "MACHINE" : "qemux86-64",
-                "SDKMACHINE" : "x86_64",
                 "PACKAGE_CLASSES" : "package_rpm",
                 "extravars" : [
                     "RPM_GPG_SIGN_CHUNK = '1'"
@@ -442,7 +384,7 @@
             "step1" : {
                 "MACHINE" : "qemux86-64",
                 "shortname" : "qemux86-64 wic",
-                "BBTARGETS" : "wic-tools core-image-sato",
+                "BBTARGETS" : "wic-tools demo-image-base",
                 "EXTRACMDS" : [
                     "wic create directdisk -e core-image-sato -o ${BUILDDIR}/tmp/deploy/wic_images/qemux86-64/directdisk/core-image-sato/",
                     "wic create directdisk-gpt -e core-image-sato -o ${BUILDDIR}/tmp/deploy/wic_images/qemux86-64/directdisk/core-image-sato/",
@@ -456,7 +398,6 @@
                 "PACKAGECONFIG:pn-nativesdk-python3:append = ' pgo'"
             ],
             "step1" : {
-                "SDKMACHINE" : "x86_64",
                 "shortname" : "x86_64 tools",
                 "BBTARGETS" : "buildtools-tarball buildtools-extended-tarball uninative-tarball",
                 "SANITYTARGETS" : "buildtools-tarball:do_testsdk buildtools-extended-tarball:do_testsdk"
@@ -488,7 +429,6 @@
         },
         "checkuri" : {
             "MACHINE" : "qemux86",
-            "SDKMACHINE" : "x86_64",
             "BBTARGETS" : "universe:do_checkuri",
             "extravars" : [
                 "SOURCE_MIRROR_FETCH = '1'",
@@ -527,19 +467,11 @@
             }
         },
         "check-layer-nightly" : {
-            "NEEDREPOS" : ["poky", "meta-arm", "meta-openembedded", "meta-virtualization"],
+            "NEEDREPOS" : ["poky", "meta-openembedded", "meta-ros", "meta-virtualization", "meta-tegra", "meta-tegra-community", "meta-delian"],
             "step1" : {
-                "shortname" : "Test meta-arm YP Compatibility",
+                "shortname" : "Test meta-delian YP Compatibility",
                 "MACHINE" : "qemuarm64",
-                "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-arm/meta-arm ../meta-arm/meta-arm-toolchain ../meta-arm/meta-arm-bsp ../meta-arm/meta-gem5 ../meta-arm/meta-arm-autonomy --dependency ../meta-openembedded/meta-oe ../meta-openembedded/meta-multimedia ../meta-openembedded/meta-networking ../meta-openembedded/meta-python ../meta-poky ../meta-openembedded/meta-filesystems ../meta-virtualization --no-auto-dependency"]
-            },
-            "step2" : {
-                "shortname" : "Test meta-oe YP Compatibility",
-                "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-openembedded --no-auto-dependency"]
-            },
-            "step3" : {
-                "shortname" : "Test meta-virtualization YP Compatibility",
-                "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-virtualization --dependency ../meta-openembedded/meta-oe ../meta-openembedded/meta-multimedia ../meta-openembedded/meta-networking ../meta-openembedded/meta-python ../meta-openembedded/meta-filesystems --no-auto-dependency"]
+                "EXTRACMDS" : ["yocto-check-layer-wrapper ../meta-delian/meta-delian-os ../meta-delian/meta-tegra-support --dependency ../meta-openembedded/meta-oe ../meta-openembedded/meta-networking ../meta-openembedded/meta-python ../meta-openembedded/meta-filesystems ../meta-ros/meta-ros-common ../meta-ros/meta-ros2 ../meta-ros/meta-ros2-humble ../meta-tegra ../meta-tegra-community --no-auto-dependency"]
             }
         },
         "metrics" : {
@@ -602,29 +534,6 @@
                 "BBTARGETS" : "world -k"
             }
         },
-        "meta-virt" : {
-            "NEEDREPOS" : ["poky", "meta-openembedded", "meta-virtualization"],
-            "ADDLAYER" : [
-                "${BUILDDIR}/../meta-openembedded/meta-oe",
-                "${BUILDDIR}/../meta-openembedded/meta-python",
-                "${BUILDDIR}/../meta-openembedded/meta-networking",
-                "${BUILDDIR}/../meta-openembedded/meta-filesystems",
-                "${BUILDDIR}/../meta-virtualization"
-            ],
-            "extravars" : [
-                "DISTRO_FEATURES:append = ' virtualization xen'"
-            ],
-            "step1" : {
-                "shortname": "Xen for qemux86-64",
-                "MACHINE": "qemux86-64",
-                "BBTARGETS" : "xen-image-minimal"
-            },
-            "step2" : {
-                "shortname": "Xen for qemuarm64",
-                "MACHINE": "qemuarm64",
-                "BBTARGETS" : "xen-image-minimal"
-            }
-        },
         "qa-extras" : {
             "MACHINE" : "qemux86-64",
             "step1" : {
@@ -645,7 +554,6 @@
             },
             "step3" : {
                 "shortname" : "Full eSDK type",
-                "SDKMACHINE" : "x86_64",
                 "BBTARGETS" : "core-image-minimal:do_populate_sdk_ext",
                 "extravars" : [
                     "SDK_EXT_TYPE = 'full'"
@@ -653,18 +561,15 @@
             },
             "step4" : {
                 "shortname" : "Prep locked-sigs test",
-                "SDKMACHINE" : "x86_64",
                 "BBTARGETS" : "core-image-sato core-image-sato:do_populate_sdk_ext"
             },
             "step5" : {
                 "shortname" : "Prep #2 locked-sigs test",
-                "SDKMACHINE" : "x86_64",
                 "BBTARGETS" : "core-image-sato -S none",
                 "EXTRACMDS" : ["${SCRIPTSDIR}/../janitor/clobberdir ${BUILDDIR}/../build/tmp"]
             },
             "step6" : {
                 "shortname" : "Test locked-sigs image",
-                "SDKMACHINE" : "x86_64",
                 "BBTARGETS" : "core-image-sato",
                 "extravars" : [
                     "TMPDIR = '${TOPDIR}/newtmp'",
@@ -673,7 +578,6 @@
             },
             "step7" : {
                 "shortname" : "Test locked-sigs eSDK",
-                "SDKMACHINE" : "x86_64",
                 "BBTARGETS" : "core-image-sato:do_populate_sdk_ext",
                 "extravars" : [
                     "TMPDIR = '${TOPDIR}/sdktmp'"
@@ -774,23 +678,23 @@
                 "${SCRIPTSDIR}/setup-auh ${HELPERBUILDDIR}; ${SCRIPTSDIR}/run-auh ${HELPERBUILDDIR}"
             ]
         },
-        "meta-oe-mirror" : {
-            "SDKMACHINE" : "x86_64",
+        "meta-delian-mirror" : {
             "MACHINE" : "qemux86-64",
-            "NEEDREPOS" : ["poky", "meta-openembedded"],
+            "DISTRO" : "delios",
+            "NEEDREPOS" : ["poky", "meta-openembedded", "meta-ros", "meta-virtualization", "meta-tegra", "meta-tegra-community", "meta-delian"],
             "ADDLAYER" : [
-                "${BUILDDIR}/../meta-selftest",
-
                 "${BUILDDIR}/../meta-openembedded/meta-oe",
                 "${BUILDDIR}/../meta-openembedded/meta-python",
-                "${BUILDDIR}/../meta-openembedded/meta-perl",
                 "${BUILDDIR}/../meta-openembedded/meta-networking",
-                "${BUILDDIR}/../meta-openembedded/meta-multimedia",
-                "${BUILDDIR}/../meta-openembedded/meta-gnome",
-                "${BUILDDIR}/../meta-openembedded/meta-xfce",
                 "${BUILDDIR}/../meta-openembedded/meta-filesystems",
-                "${BUILDDIR}/../meta-openembedded/meta-initramfs",
-                "${BUILDDIR}/../meta-openembedded/meta-webserver"
+                "${BUILDDIR}/../meta-ros/meta-ros-common",
+                "${BUILDDIR}/../meta-ros/meta-ros2",
+                "${BUILDDIR}/../meta-ros/meta-ros2-humble",
+                "${BUILDDIR}/../meta-tegra",
+                "${BUILDDIR}/../meta-tegra-community",
+                "${BUILDDIR}/../meta-delian/meta-delian-os",
+                "${BUILDDIR}/../meta-delian/meta-tegra-support",
+                "${BUILDDIR}/../meta-selftest"
             ],
             "extravars" : [
                 "LICENSE_FLAGS_ACCEPTED = 'commercial'",
@@ -871,12 +775,6 @@
         },
         "meta-delian" : {
             "url" : "ssh://git@github.com/chpap/meta-delian",
-            "branch" : "kirkstone",
-            "revision" : "HEAD",
-            "no-layer-add" : true
-        },
-        "meta-security" : {
-            "url" : "git://git.yoctoproject.org/meta-security",
             "branch" : "kirkstone",
             "revision" : "HEAD",
             "no-layer-add" : true
